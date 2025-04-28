@@ -21,7 +21,7 @@
 #define IAMGE_H (60)
 #define IMAGE_SIZE (IAMGE_W * IAMGE_H)
 
-void image_log();
+void image_use();
 extern uint8 Find_Line_Image[IAMGE_H][IAMGE_W];
 
 #endif

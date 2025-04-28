@@ -2,13 +2,12 @@
  * @Author: yyx-pc 3454523412@qq.com
  * @Date: 2025-03-07 20:52:17
  * @LastEditors: yyx-pc 3454523412@qq.com
- * @LastEditTime: 2025-03-18 16:38:33
+ * @LastEditTime: 2025-04-28 22:11:21
  * @FilePath: \Seekfree_CYT4BB_Opensource_Library\project\code\imagedeal.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
  * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 #include "imagedeal.h"
-
 
 #define GrayScale 256
 
@@ -16,7 +15,7 @@ uint8 Find_Line_Image[IAMGE_H][IAMGE_W];  // 定义一个 80 * 60 的图像数�
 
 bool Inverse_Flag = false;      // 逆透视标志位
 bool Image_Count_Flag = false;  // 图像计数标志位
-uint16 Image_Count = 0;           // 图像计数
+uint16 Image_Count = 0;         // 图像计数
 
 uint8 find_extreme_num(uint8 *val, uint8 num0, uint8 num2, uint8 mode);
 
@@ -96,7 +95,7 @@ void Copy_Zip_Image(void)  //*****
             }
         }
         // Get_Inverse_Perspective_Image(Find_Line_Image, I_Perspective_Image);
-        // //逆透视处理函数，在另处详细说明
+        // 逆透视处理函数，在另处详细说明
         if (Image_Count_Flag == 1) {
             Image_Count++;
         } else if (Image_Count_Flag == 0) {
@@ -124,7 +123,7 @@ uint8 reference_point, white_max_point, white_min_point;
  * 返回值：        无
  */
 void get_reference_point(const uint8 *image) {
-    uint8 *p = (uint8 *)&image[SEARCH_IMAGE_H -
+    uint8 *p = (uint8 *)&image[SEARCH_IMAGE_H +
                                REFERENCEROW * SEARCH_IMAGE_W];  // 需要
     uint16 temp = 0;
     uint32 temp2 = 0;
@@ -197,10 +196,6 @@ void search_reference_col(const uint8 *image) {
 
 int l_border[SEARCH_IMAGE_H];  // 左线数组
 int r_border[SEARCH_IMAGE_H];  // 右线数组
-
-
-
-
 
 /**
  * 函数功能：      搜索线
@@ -339,15 +334,54 @@ void search_line(const uint8 *image) {
     }
 }
 
-
+uint8 left_line[IAMGE_H];
+uint8 right_line[IAMGE_H];
+/**
+ * 函数功能：      搜索线
+ * 特殊说明：      通过搜索图像的最下面一行的平均值作为参考点
+ *                通过参考点加减一定值得到白线的最大值和最小值
+ *
+ * 形  参：        const uint8 *image
+ * 返回值：        无
+ */
+void search_line2(void) {
+    for (int i = 0; i < IAMGE_H; i++) {
+        left_line[i] = IAMGE_W - 1;  // 初始化左线
+        right_line[i] = 0;           // 初始化右线
+        for (int j = 2; j < IAMGE_W; j += 2) {
+            float diff =
+                (float)(Find_Line_Image[i][j] - Find_Line_Image[i][j - 2]);
+            float sum =
+                (float)(Find_Line_Image[i][j] + Find_Line_Image[i][j - 2]);
+            if (diff / sum > 0.25) {
+                left_line[i] = j - 1;
+                break;
+            }
+        }
+        for (int j = IAMGE_W - 1; j > 2; j -= 2) {
+            float diff =
+                (float)(Find_Line_Image[i][j] - Find_Line_Image[i][j - 2]);
+            float sum =
+                (float)(Find_Line_Image[i][j] + Find_Line_Image[i][j - 2]);
+            if (diff / sum > 0.25) {
+                right_line[i] = j - 1;
+                break;
+            }
+        }
+    }
+}
 
 void image_log() {
     Copy_Zip_Image();
-    get_reference_point(&Find_Line_Image[0][0]);
-    search_reference_col(&Find_Line_Image[0][0]);
-    search_line(&Find_Line_Image[0][0]);
-    for(int i=0;i<IAMGE_H;i++){
-        Find_Line_Image[i][(l_border[i]+r_border[i])/2] = 255;
+    // get_reference_point(&Find_Line_Image[0][0]);
+    // search_reference_col(&Find_Line_Image[0][0]);
+    // search_line(&Find_Line_Image[0][0]);
+    search_line2();
+    for (int i = 0; i < IAMGE_H; i++) {
+        // Find_Line_Image[i][left_line[i]] = 255;
+        Find_Line_Image[i][(left_line[i] + right_line[i]) / 2] = 255;
+        // Find_Line_Image[i][right_line[i]] = 255;
     }
-    ips114_show_gray_image(0, 0, (Find_Line_Image[0]), IAMGE_W, IAMGE_H, (IAMGE_W), (IAMGE_H), 0);
+    ips114_show_gray_image(0, 0, (Find_Line_Image[0]), IAMGE_W, IAMGE_H,
+                           (IAMGE_W), (IAMGE_H), 0);
 }

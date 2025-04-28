@@ -2,7 +2,7 @@
  * @Author: yyx-pc 3454523412@qq.com
  * @Date: 2025-04-27 20:17:38
  * @LastEditors: yyx-pc 3454523412@qq.com
- * @LastEditTime: 2025-04-27 20:36:26
+ * @LastEditTime: 2025-04-28 22:04:29
  * @FilePath: \car\Seekfree_CYT4BB_Opensource_Library\project\code\image.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
  * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -50,6 +50,8 @@ void Copy_Zip_Image(void)  //*****
     }
 }
 
+uint8 left_line[IAMGE_H];
+uint8 right_line[IAMGE_H];
 /**
  * 函数功能：      搜索线
  * 特殊说明：      通过搜索图像的最下面一行的平均值作为参考点
@@ -58,4 +60,41 @@ void Copy_Zip_Image(void)  //*****
  * 形  参：        const uint8 *image
  * 返回值：        无
  */
-void search_line(void) {}
+void search_line2(void) {
+    for (int i = 0; i < IAMGE_H; i++) {
+        left_line[i] = 0;    // 初始化左线
+        right_line[i] = 59;  // 初始化右线
+        for (int j = 2; j < 30; j += 2) {
+            float diff =
+                (float)(Find_Line_Image[i][j] - Find_Line_Image[i][j - 2]);
+            float sum =
+                (float)(Find_Line_Image[i][j] + Find_Line_Image[i][j - 2]);
+            if (diff / sum > 0.25) {
+                left_line[i] = j - 1;
+                break;
+            }
+        }
+        for (int j = IAMGE_W - 1; j > 30; j -= 2) {
+            float diff =
+                (float)(Find_Line_Image[i][j] - Find_Line_Image[i][j - 2]);
+            float sum =
+                (float)(Find_Line_Image[i][j] + Find_Line_Image[i][j - 2]);
+            if (diff / sum > 0.25) {
+                left_line[i] = j - 1;
+                break;
+            }
+        }
+    }
+}
+
+void image_use() {
+    Copy_Zip_Image();
+    search_line();
+    for (int i = 0; i < IAMGE_H; i++) {
+        Find_Line_Image[i][left_line[i]] = 255;
+        // ind_Line_Image[i][(l_border[i] + r_border[i]) / 2] = 255;
+        Find_Line_Image[i][right_line[i]] = 255;
+    }
+    ips114_show_gray_image(0, 0, (Find_Line_Image[0]), IAMGE_W, IAMGE_H,
+                           (IAMGE_W), (IAMGE_H), 0);
+}
