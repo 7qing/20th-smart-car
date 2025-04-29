@@ -1116,9 +1116,6 @@
     <group>
         <name>code</name>
         <file>
-            <name>$PROJ_DIR$\..\..\code\consant.h</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\..\code\imagedeal.c</name>
         </file>
         <file>

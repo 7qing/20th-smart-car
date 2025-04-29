@@ -2,7 +2,7 @@
  * @Author: yyx-pc 3454523412@qq.com
  * @Date: 2025-03-07 20:52:17
  * @LastEditors: yyx-pc 3454523412@qq.com
- * @LastEditTime: 2025-04-28 22:11:21
+ * @LastEditTime: 2025-04-29 21:43:36
  * @FilePath: \Seekfree_CYT4BB_Opensource_Library\project\code\imagedeal.c
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
  * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -345,7 +345,7 @@ uint8 right_line[IAMGE_H];
  * 返回值：        无
  */
 void search_line2(void) {
-    for (int i = 0; i < IAMGE_H; i++) {
+    for (int i = 10; i < IAMGE_H; i += 2) {
         left_line[i] = IAMGE_W - 1;  // 初始化左线
         right_line[i] = 0;           // 初始化右线
         for (int j = 2; j < IAMGE_W; j += 2) {
@@ -353,17 +353,17 @@ void search_line2(void) {
                 (float)(Find_Line_Image[i][j] - Find_Line_Image[i][j - 2]);
             float sum =
                 (float)(Find_Line_Image[i][j] + Find_Line_Image[i][j - 2]);
-            if (diff / sum > 0.25) {
+            if (diff / sum > 0.36) {
                 left_line[i] = j - 1;
                 break;
             }
         }
-        for (int j = IAMGE_W - 1; j > 2; j -= 2) {
+        for (int j = IAMGE_W - 10; j > 2; j -= 2) {
             float diff =
-                (float)(Find_Line_Image[i][j] - Find_Line_Image[i][j - 2]);
+                (float)(Find_Line_Image[i][j - 2] - Find_Line_Image[i][j]);
             float sum =
                 (float)(Find_Line_Image[i][j] + Find_Line_Image[i][j - 2]);
-            if (diff / sum > 0.25) {
+            if (diff / sum > 0.36) {
                 right_line[i] = j - 1;
                 break;
             }
