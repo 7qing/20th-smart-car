@@ -87,13 +87,15 @@ int main(void) {
     ips114_show_string(0, 0, "seekfree");
     // 此处编写用户代码 例如外设初始化代码等
     while (true) {
-        // 此处编写需要循环执行的代码
-        image_log();
-        // ips114_show_float(0,0,(double)imu660ra_gyro_transition(imu660ra_gyro_x),2,2);
-        // ips114_show_uint                (0,0,
-        // encoder_get_count(TC_CH58_ENCODER), 4); ips114_show_uint (0,17,
-        // encoder_get_count(TC_CH27_ENCODER), 4);
-        //  此处编写需要循环执行的代码
+        if(mt9v03x_finish_flag)
+        {
+            image_boundary_process();
+            //ips114_show_uint(0, 200, leftline_num, 3);
+            //ips114_show_uint(0, 216, rightline_num, 3);
+            ips114_displayimage03x((const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H);   // 显示原始图像
+            //ips200_show_gray_image(0, 188, (const uint8 *)mt9v03x_image, MT9V03X_W, MT9V03X_H, 240, 180, 64);     // 显示二值化图像
+            mt9v03x_finish_flag = 0;
+        }
     }
 }
 
