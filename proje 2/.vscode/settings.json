@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "zf_common_headfile.h": "c",
+        "user_code.h": "c",
+        "navigation.h": "c"
+    }
+}

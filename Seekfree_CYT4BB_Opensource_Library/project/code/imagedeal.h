@@ -2,7 +2,7 @@
  * @Author: yyx-pc 3454523412@qq.com
  * @Date: 2025-03-07 20:50:53
  * @LastEditors: yyx-pc 3454523412@qq.com
- * @LastEditTime: 2025-04-30 21:24:55
+ * @LastEditTime: 2025-05-02 18:41:46
  * @FilePath: \Seekfree_CYT4BB_Opensource_Library\project\code\imagedeal.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置
  * 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
@@ -22,7 +22,7 @@ extern int16 sar_thre;       // 差比和阈值
 extern uint8 pix_per_meter;  // 每米的像素数
 
 void image_boundary_process(void);
-void difsum_left(uint8 y, uint8 x);
-void difsum_right(uint8 y, uint8 x);
-
+bool difsum_left(uint8 y, uint8 x);
+bool difsum_right(uint8 y, uint8 x);
+bool difsum_up(uint8 y, uint8 x);
 #endif
